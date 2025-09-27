@@ -1,5 +1,11 @@
+import Profile from "@/components/profile";
+
 const Doctor = () => {
-  return <div>Doctor</div>;
+  return (
+    <div>
+      <Profile />
+    </div>
+  );
 };
 
 export default Doctor;
