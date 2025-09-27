@@ -6,6 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { LogoutButton } from "./logout";
 
 const Profile = () => {
   const [user, setUser] = useState({});
@@ -27,7 +28,9 @@ const Profile = () => {
       <DropdownMenuContent>
         <DropdownMenuItem>{user.email}</DropdownMenuItem>
         <DropdownMenuItem>{user.role}</DropdownMenuItem>
-        <DropdownMenuItem></DropdownMenuItem>
+        <DropdownMenuItem>
+          <LogoutButton />
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
