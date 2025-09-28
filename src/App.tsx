@@ -5,6 +5,8 @@ import Reception from "./page/reception";
 import Login from "./page/login";
 import { RoleRoute } from "./routes/role-route";
 import { AuthRefresh } from "./bootstrap/auth-refresh";
+import ChangePassword from "./page/change-password";
+import CreateUserForm from "./components/users/create-users";
 
 function App() {
   return (
@@ -36,7 +38,8 @@ function App() {
               </RoleRoute>
             }
           />
-          <Route path="/" />
+          <Route path="/change-password" element={<ChangePassword />} />
+          <Route path="/create-user" element={<CreateUserForm />} />
         </Routes>
       </AuthRefresh>
     </>

@@ -24,6 +24,12 @@ const Login = () => {
     e.preventDefault();
     const { data } = await api.post("/auth/login", { email, password });
     login(data.access_token, data.user);
+    if (data.user.mustChangePassword) {
+      nav("/change-password", { replace: true });
+      return;
+    }
+
+    nav(rolePath[data.user.role as keyof typeof rolePath], { replace: true });
 
     nav(rolePath[data.user.role as keyof typeof rolePath], { replace: true });
   }
