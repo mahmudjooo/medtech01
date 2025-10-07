@@ -9,7 +9,9 @@ export function LogoutButton() {
   async function onLogout() {
     try {
       await api.post("/auth/logout");
-    } catch {}
+    } catch (err) {
+      return err;
+    }
     logout();
     nav("/login", { replace: true });
   }

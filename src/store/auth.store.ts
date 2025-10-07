@@ -6,6 +6,8 @@ export type User = {
   id: string;
   email: string;
   role: Role;
+  firsname: string;
+  lastname: string;
   mustChangePassword: boolean;
 };
 

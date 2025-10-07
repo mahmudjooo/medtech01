@@ -6,25 +6,22 @@ import {
   Card,
   CardContent,
   CardHeader,
-  Typography,
   TextField,
   MenuItem,
   Alert,
   CircularProgress,
 } from "@mui/material";
 
-type Role = "admin" | "doctor" | "reception";
-
-export default function CreateUserForm() {
+export default function CreatePatientForm() {
   const [email, setEmail] = useState("");
   const [firstName, setFirst] = useState("");
   const [lastName, setLast] = useState("");
-  const [role, setRole] = useState<Role>("doctor");
-  const [temporaryPassword, setTempPass] = useState("");
-
+  const [gender, setGender] = useState("");
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [notes, setNotes] = useState("");
+  const [phone, setPhone] = useState("");
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,21 +30,19 @@ export default function CreateUserForm() {
     setLoading(true);
 
     try {
-      const { data } = await api.post("/users", {
+      const { data } = await api.post("/patients", {
         email,
         firstName,
         lastName,
-        role,
-        temporaryPassword,
+        gender,
+        notes,
+        phone,
       });
-      setMsg(`Foydalanuvchi yaratildi: ${data.email}`);
-      setEmail("");
-      setFirst("");
-      setLast("");
-      setRole("doctor");
-      setTempPass("");
-    } catch (e: any) {
-      setErr(e?.response?.data?.message || "Yaratishda xatolik");
+
+      console.log(data);
+      setMsg(`Bemor qo'shildi: ${data.firstName} ${data.lastName}`);
+    } catch (error: any) {
+      setErr(error?.response?.data?.message || "Qo'shishda xatolik");
     } finally {
       setLoading(false);
     }
@@ -65,7 +60,7 @@ export default function CreateUserForm() {
     >
       <Card sx={{ maxWidth: 400, width: "100%", boxShadow: 3 }}>
         <CardHeader
-          title="Yangi foydalanuvchi yaratish"
+          title="Yangi bemor qo'shish"
           sx={{ textAlign: "center", bgcolor: "primary.main", color: "white" }}
         />
         <CardContent>
@@ -75,7 +70,6 @@ export default function CreateUserForm() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
               fullWidth
               margin="normal"
             />
@@ -101,24 +95,32 @@ export default function CreateUserForm() {
             />
 
             <TextField
+              label="Telefon raqami"
+              type="text"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+
+            <TextField
               select
-              label="Rol"
-              value={role}
-              onChange={(e) => setRole(e.target.value as Role)}
+              label="Jinsi"
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
               fullWidth
               margin="normal"
             >
-              <MenuItem value="doctor">Doctor</MenuItem>
-              <MenuItem value="reception">Reception</MenuItem>
-              <MenuItem value="admin">Admin</MenuItem>
+              <MenuItem value="male">Erkak</MenuItem>
+              <MenuItem value="female">Ayol</MenuItem>
+              <MenuItem value="child">Bola</MenuItem>
             </TextField>
 
             <TextField
-              label="Vaqtinchalik parol"
-              type="password"
-              value={temporaryPassword}
-              onChange={(e) => setTempPass(e.target.value)}
-              required
+              label="Izoh"
+              type="text"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
               fullWidth
               margin="normal"
             />
@@ -131,7 +133,7 @@ export default function CreateUserForm() {
                 fullWidth
                 disabled={loading}
               >
-                Yaratish
+                Qo'shish
               </Button>
               {loading && (
                 <CircularProgress

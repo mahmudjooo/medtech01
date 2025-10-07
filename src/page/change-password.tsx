@@ -26,7 +26,9 @@ const ChangePassword = () => {
       }
       setCurrent("");
       setNext("");
-    } catch {}
+    } catch (err) {
+      return { err };
+    }
   };
 
   return (
