@@ -19,6 +19,8 @@ import PatientsProfile from "./components/patients/Patients-Profile";
 import FetchPatients from "./components/patients/Fetchpatients";
 import DoctorSaidebar from "./components/doctor/doctor-Saidebar";
 import CreateAppointment from "./components/appointments/create-appointment";
+import CreateMedicalRecordForm from "./components/medicalRecords/create-medical";
+import AppointmentsPage from "./components/appointments/listAppoinments";
 
 function App() {
   return (
@@ -67,6 +69,8 @@ function App() {
             <Route path="patient" element={<FetchPatients />} />
             <Route path="patient/:id" element={<PatientsProfile />} />
             <Route path="createappointment" element={<CreateAppointment />} />
+            <Route path="createMedical" element={<CreateMedicalRecordForm />} />
+            <Route path="listMedical" element={<AppointmentsPage />} />
           </Route>
 
           <Route path="/change-password" element={<ChangePassword />} />

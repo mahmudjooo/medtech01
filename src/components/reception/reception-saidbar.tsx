@@ -26,6 +26,7 @@ import Profile from "../navigation/profile";
 import { Link, Outlet } from "react-router-dom";
 import { HomeIcon, User2 } from "lucide-react";
 import {
+  FaBookMedical,
   FaCreativeCommonsBy,
   FaSearch,
   FaUber,
@@ -52,6 +53,7 @@ const menuItems = [
     icon: <FaUber style={{ fontSize: 28 }} />,
     path: "/reception/patient/:id",
   },
+
   {
     text: "Patiend Add",
     icon: <FaUserPlus style={{ fontSize: 28 }} />,
@@ -71,6 +73,16 @@ const menuItems = [
     text: "Create Appartpation",
     icon: <FaCreativeCommonsBy style={{ fontSize: 28 }} />,
     path: "/reception/createappointment",
+  },
+  {
+    text: "CreqateMedical",
+    icon: <FaBookMedical style={{ fontSize: 28 }} />,
+    path: "/reception/createMedical",
+  },
+  {
+    text: "CreqateMedical",
+    icon: <FaBookMedical style={{ fontSize: 28 }} />,
+    path: "/reception/listMedical",
   },
 ];
 
