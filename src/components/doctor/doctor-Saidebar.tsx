@@ -25,7 +25,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Profile from "../navigation/profile";
 import { Link, Outlet } from "react-router-dom";
 import { HomeIcon } from "lucide-react";
-import { FaDashcube, FaUser, FaUserCheck } from "react-icons/fa";
+import { FaAppStore, FaDashcube, FaUser, FaUserCheck } from "react-icons/fa";
 
 const drawerWidthOpen = 280;
 const drawerWidthClosed = 72;
@@ -55,6 +55,11 @@ const menuItems = [
     text: "DoctorDashboard",
     icon: <FaUser style={{ fontSize: 28 }} />,
     path: "/doctor/patient/:id",
+  },
+  {
+    text: "DoctorDashboard",
+    icon: <FaAppStore style={{ fontSize: 28 }} />,
+    path: "/doctor/appointments",
   },
 ];
 
