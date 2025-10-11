@@ -21,7 +21,7 @@ import DoctorSaidebar from "./components/doctor/doctor-Saidebar";
 import CreateAppointment from "./components/appointments/create-appointment";
 import CreateMedicalRecordForm from "./components/medicalRecords/create-medical";
 import AppointmentsPage from "./components/appointments/listAppoinments";
-import AppointmentsMe from "./components/doctor/AppointmentsMe";
+import DoctorAppointments from "./components/doctor/AppointmentsMe";
 
 function App() {
   return (
@@ -57,7 +57,7 @@ function App() {
               path="patient/:id/records"
               element={<CreateMedicalRecordForm />}
             />
-            <Route path="appointments" element={<AppointmentsMe />} />
+            <Route path="appointments" element={<DoctorAppointments />} />
             <Route path="patient/:id" element={<PatientsProfile />} />
             <Route path="docDash" element={<DoctorDashboard />} />
           </Route>

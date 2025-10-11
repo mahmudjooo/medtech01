@@ -46,16 +46,7 @@ const menuItems = [
     icon: <FaDashcube style={{ fontSize: 28 }} />,
     path: "/doctor/docDash",
   },
-  {
-    text: "DoctorDashboard",
-    icon: <FaDashcube style={{ fontSize: 28 }} />,
-    path: "/doctor/patients/:id/records",
-  },
-  {
-    text: "DoctorDashboard",
-    icon: <FaUser style={{ fontSize: 28 }} />,
-    path: "/doctor/patient/:id",
-  },
+
   {
     text: "DoctorDashboard",
     icon: <FaAppStore style={{ fontSize: 28 }} />,
