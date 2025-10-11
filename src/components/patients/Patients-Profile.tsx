@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api } from "@/service/api"; // sizdagi api
+import { api } from "@/service/api";
 import { useParams } from "react-router-dom";
 import {
   Container,
@@ -7,43 +7,68 @@ import {
   Card,
   CardContent,
   CircularProgress,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+  Box,
 } from "@mui/material";
 
 function PatientsProfile() {
   const { id } = useParams();
   const [patient, setPatient] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  const fetchPatient = async () => {
-    try {
-      const res = await api.get(`/patients/${id}`);
-      setPatient(res.data);
-    } catch (error) {
-      console.error("Error fetching patient", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [records, setRecords] = useState([]);
+  const [loadingPatient, setLoadingPatient] = useState(true);
+  const [loadingRecords, setLoadingRecords] = useState(true);
 
   useEffect(() => {
-    fetchPatient();
+    // Bemor ma'lumotlarini yuklash
+    const fetchPatient = async () => {
+      try {
+        const res = await api.get(`/patients/${id}`);
+        setPatient(res.data);
+      } catch (error) {
+        console.error("Error fetching patient", error);
+        setPatient(null);
+      } finally {
+        setLoadingPatient(false);
+      }
+    };
+
+    // Bemorning yozuvlarini yuklash
+    const fetchRecords = async () => {
+      try {
+        const res = await api.get(`/patients/${id}/records`);
+        setRecords(res.data.items || []);
+      } catch (error) {
+        console.error("Error fetching records", error);
+        setRecords([]);
+      } finally {
+        setLoadingRecords(false);
+      }
+    };
+
+    if (id) {
+      fetchPatient();
+      fetchRecords();
+    }
   }, [id]);
 
-  if (loading) {
+  if (loadingPatient || loadingRecords) {
     return (
-      <div style={{ textAlign: "center", marginTop: "3rem" }}>
+      <Box sx={{ textAlign: "center", marginTop: 5 }}>
         <CircularProgress />
-      </div>
+      </Box>
     );
   }
 
   if (!patient) {
-    return <p style={{ textAlign: "center" }}>Bemor topilmadi</p>;
+    return <Typography align="center">Bemor topilmadi</Typography>;
   }
 
   return (
-    <Container sx={{ mt: 4 }}>
-      <Card sx={{ maxWidth: 500, margin: "0 auto", p: 2 }}>
+    <Container sx={{ mt: 4, maxWidth: 600 }}>
+      <Card sx={{ mb: 3 }}>
         <CardContent>
           <Typography variant="h5" gutterBottom>
             {patient.firstName} {patient.lastName}
@@ -54,6 +79,54 @@ function PatientsProfile() {
           </Typography>
         </CardContent>
       </Card>
+
+      <Typography variant="h6" gutterBottom>
+        Tibbiy yozuvlar ({records.length})
+      </Typography>
+      {records.length === 0 ? (
+        <Typography color="text.secondary">
+          Hech qanday yozuv topilmadi.
+        </Typography>
+      ) : (
+        <List>
+          {records.map((record) => (
+            <div key={record.id}>
+              <ListItem alignItems="flex-start">
+                <ListItemText
+                  primary={`${
+                    record.type.charAt(0).toUpperCase() + record.type.slice(1)
+                  }`}
+                  secondary={
+                    <>
+                      <Typography
+                        component="span"
+                        variant="body2"
+                        color="text.primary"
+                      >
+                        Tavsif:{" "}
+                      </Typography>
+                      {record.description || "—"} <br />
+                      <Typography
+                        component="span"
+                        variant="body2"
+                        color="text.primary"
+                      >
+                        Recept:{" "}
+                      </Typography>
+                      {record.prescription || "—"} <br />
+                      <Typography variant="caption" color="text.secondary">
+                        Qo‘shilgan sana:{" "}
+                        {new Date(record.createdAt).toLocaleDateString()}
+                      </Typography>
+                    </>
+                  }
+                />
+              </ListItem>
+              <Divider component="li" />
+            </div>
+          ))}
+        </List>
+      )}
     </Container>
   );
 }

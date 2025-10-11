@@ -1,5 +1,6 @@
 import { api } from "@/service/api";
-import React, { useEffect, useState, useCallback } from "react";
+import { TextField } from "@mui/material";
+import React, { useEffect, useState } from "react";
 
 interface Patient {
   id: string;
@@ -34,7 +35,7 @@ const AppointmentsPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const [offset, setOffset] = useState(0);
-  const [limit] = useState(10);
+  const [limit] = useState(6);
   const [total, setTotal] = useState(0);
 
   const [doctorId, setDoctorId] = useState("");
@@ -44,10 +45,15 @@ const AppointmentsPage: React.FC = () => {
     "createdDesc"
   );
 
-  const loadAppointments = useCallback(async () => {
+  const fetchAppointments = async () => {
     setLoading(true);
     setError(null);
     try {
+      const paramss: any = {};
+      if (q.trim()) {
+        paramss.q = q.trim();
+      }
+
       const params: any = { offset, limit, sort };
       if (doctorId) params.doctorId = doctorId;
       if (patientId) params.patientId = patientId;
@@ -61,255 +67,229 @@ const AppointmentsPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [offset, limit, sort, doctorId, patientId, status]);
+  };
 
   useEffect(() => {
-    loadAppointments();
-  }, [loadAppointments]);
+    fetchAppointments();
+  }, [offset, limit, sort, doctorId, patientId, status]);
 
   const pages = Math.ceil(total / limit);
   const currentPage = Math.floor(offset / limit) + 1;
 
-  // O‘chirish funksiyasi alert bilan
   const handleDelete = async (id: string) => {
     if (!window.confirm("Haqiqatan o‘chirmoqchimisiz?")) return;
     try {
       await api.delete(`/appointments/${id}`);
       alert("Appointment muvaffaqiyatli o‘chirildi.");
-      loadAppointments();
+      fetchAppointments();
     } catch (e: any) {
       alert("O‘chirishda xatolik: " + (e.message || "Nomaʼlum xatolik"));
     }
   };
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "confirmed":
+        return "green";
+      case "cancelled":
+        return "red";
+      case "scheduled":
+        return "#ffa000";
+      default:
+        return "#555";
+    }
+  };
+
+  const [q, setQ] = useState("");
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQ(e.target.value);
+  };
+
   return (
-    <div
-      style={{
-        padding: 20,
-        maxWidth: 900,
-        margin: "auto",
-        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-      }}
-    >
-      <h1 style={{ textAlign: "center", marginBottom: 30 }}>Appointments</h1>
-
-      {/* Filterlar */}
-      <div
-        style={{
-          marginBottom: 30,
-          display: "flex",
-          gap: 15,
-          flexWrap: "wrap",
-          justifyContent: "center",
-        }}
-      >
-        <input
-          placeholder="Doctor ID"
-          value={doctorId}
-          onChange={(e) => setDoctorId(e.target.value)}
+    <>
+      <div className="w-full flex gap-20 items-center px-10">
+        <div
           style={{
-            padding: "8px 12px",
-            borderRadius: 4,
-            border: "1px solid #ccc",
-            minWidth: 120,
-          }}
-        />
-        <input
-          placeholder="Patient ID"
-          value={patientId}
-          onChange={(e) => setPatientId(e.target.value)}
-          style={{
-            padding: "8px 12px",
-            borderRadius: 4,
-            border: "1px solid #ccc",
-            minWidth: 120,
-          }}
-        />
-        <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-          style={{
-            padding: "8px 12px",
-            borderRadius: 4,
-            border: "1px solid #ccc",
-            minWidth: 140,
+            padding: 24,
+            maxWidth: 1100,
+            margin: "auto",
+            fontFamily: "Segoe UI, sans-serif",
           }}
         >
-          <option value="">Barchasi</option>
-          <option value="scheduled">Scheduled</option>
-          <option value="confirmed">Confirmed</option>
-          <option value="cancelled">Cancelled</option>
-        </select>
-        <select
-          value={sort}
-          onChange={(e) => setSort(e.target.value as any)}
-          style={{
-            padding: "8px 12px",
-            borderRadius: 4,
-            border: "1px solid #ccc",
-            minWidth: 160,
-          }}
-        >
-          <option value="createdDesc">Yangi birinchi</option>
-          <option value="startAsc">Boshlanish ↑</option>
-          <option value="startDesc">Boshlanish ↓</option>
-        </select>
-      </div>
+          <h1 style={{ textAlign: "center", marginBottom: 30 }}>
+            📋 Appointmentlar
+          </h1>
 
-      {/* Natija */}
-      {loading && <p style={{ textAlign: "center" }}>Yuklanmoqda...</p>}
-
-      {error && (
-        <p style={{ color: "red", textAlign: "center" }}>Xatolik: {error}</p>
-      )}
-
-      {!loading && !error && (
-        <>
-          <p
-            style={{
-              marginBottom: 20,
-              textAlign: "center",
-              fontWeight: "bold",
-            }}
-          >
-            Topildi: {total} ta appointment, sahifa {currentPage} / {pages}
-          </p>
-
+          {/* Filterlar */}
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gap: 20,
+              marginBottom: 25,
+              display: "flex",
+              gap: 12,
+              flexWrap: "wrap",
+              justifyContent: "center",
             }}
           >
-            {appointments.map((a) => (
+            <input
+              placeholder="Doctor ID"
+              value={doctorId}
+              onChange={(e) => setDoctorId(e.target.value)}
+              style={inputStyle}
+            />
+            <input
+              placeholder="Patient ID"
+              value={patientId}
+              onChange={(e) => setPatientId(e.target.value)}
+              style={inputStyle}
+            />
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              style={inputStyle}
+            >
+              <option value="">Status (barchasi)</option>
+              <option value="scheduled">Scheduled</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value as any)}
+              style={inputStyle}
+            >
+              <option value="startAsc">Boshlanish </option>
+              <option value="startDesc">Boshlanish </option>
+            </select>
+          </div>
+
+          {/* Xabarlar */}
+          {loading && <p style={{ textAlign: "center" }}>⏳ Yuklanmoqda...</p>}
+          {error && (
+            <p style={{ color: "red", textAlign: "center" }}>❌ {error}</p>
+          )}
+
+          {/* Kartalar */}
+          {!loading && !error && (
+            <>
+              <p style={{ textAlign: "center", marginBottom: 20 }}>
+                Topildi: <b>{total}</b> appointment, sahifa <b>{currentPage}</b>{" "}
+                / {pages}
+              </p>
+
               <div
-                key={a.id}
                 style={{
-                  border: "1px solid #ddd",
-                  borderRadius: 10,
-                  padding: 20,
-                  boxShadow:
-                    "0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06)",
-                  backgroundColor: "#fff",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+                  gap: 20,
                 }}
               >
-                <div>
-                  <h3
+                {appointments.map((a) => (
+                  <div
+                    key={a.id}
                     style={{
-                      marginTop: 0,
-                      marginBottom: 10,
-                      fontSize: "1.2rem",
-                      color: "#333",
+                      backgroundColor: "#fff",
+                      border: "1px solid #ddd",
+                      borderRadius: 10,
+                      padding: 16,
+                      boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
                     }}
                   >
-                    {a.reason || "Sabab ko‘rsatilmagan"}
-                  </h3>
-                  <p>
-                    <strong>Status:</strong>{" "}
-                    <span
+                    <h3 style={{ marginBottom: 8 }}>
+                      {a.reason || "📝 Sabab yo‘q"}
+                    </h3>
+                    <p>
+                      <b>Status:</b>{" "}
+                      <span
+                        style={{
+                          color: getStatusColor(a.status),
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {a.status}
+                      </span>
+                    </p>
+                    <p>
+                      <b>Vaqti:</b> {new Date(a.startAt).toLocaleString()} -{" "}
+                      {new Date(a.endAt).toLocaleString()}
+                    </p>
+                    <p>
+                      <b>Doctor:</b> {a.doctor.firstname} {a.doctor.lastname}
+                    </p>
+                    <p>
+                      <b>Patient:</b> {a.patient.firstName} {a.patient.lastName}
+                    </p>
+
+                    <button
+                      onClick={() => handleDelete(a.id)}
                       style={{
-                        color:
-                          a.status === "confirmed"
-                            ? "green"
-                            : a.status === "cancelled"
-                            ? "red"
-                            : "#555",
-                        textTransform: "capitalize",
-                        fontWeight: "600",
+                        marginTop: 12,
+                        backgroundColor: "#d32f2f",
+                        border: "none",
+                        color: "white",
+                        padding: "8px 12px",
+                        borderRadius: 6,
+                        cursor: "pointer",
                       }}
                     >
-                      {a.status}
-                    </span>
-                  </p>
-                  <p>
-                    <strong>Vaqti:</strong>{" "}
-                    {new Date(a.startAt).toLocaleString()} -{" "}
-                    {new Date(a.endAt).toLocaleString()}
-                  </p>
-                  <p>
-                    <strong>Doctor:</strong> {a.doctor.firstname}{" "}
-                    {a.doctor.lastname}
-                  </p>
-                  <p>
-                    <strong>Patient:</strong> {a.patient.firstName}{" "}
-                    {a.patient.lastName}
-                  </p>
-                </div>
+                      🗑 O‘chirish
+                    </button>
+                  </div>
+                ))}
+              </div>
 
+              {/* Pagination */}
+              <div
+                style={{
+                  marginTop: 30,
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: 20,
+                }}
+              >
                 <button
-                  onClick={() => handleDelete(a.id)}
-                  style={{
-                    marginTop: 15,
-                    backgroundColor: "#d32f2f",
-                    border: "none",
-                    borderRadius: 6,
-                    padding: "10px 15px",
-                    color: "white",
-                    cursor: "pointer",
-                    fontWeight: "bold",
-                    transition: "background-color 0.3s ease",
-                  }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor = "#b71c1c")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.backgroundColor = "#d32f2f")
-                  }
+                  onClick={() => setOffset(Math.max(0, offset - limit))}
+                  disabled={offset === 0}
+                  style={paginationButton(offset === 0)}
                 >
-                  O‘chirish
+                  ⬅ Oldingi
+                </button>
+                <button
+                  onClick={() =>
+                    setOffset(Math.min(offset + limit, (pages - 1) * limit))
+                  }
+                  disabled={offset + limit >= total}
+                  style={paginationButton(offset + limit >= total)}
+                >
+                  Keyingi ➡
                 </button>
               </div>
-            ))}
-          </div>
+            </>
+          )}
+        </div>
 
-          {/* Pagination */}
-          <div
-            style={{
-              marginTop: 30,
-              display: "flex",
-              justifyContent: "center",
-              gap: 15,
-            }}
-          >
-            <button
-              onClick={() => setOffset(Math.max(0, offset - limit))}
-              disabled={offset === 0}
-              style={{
-                padding: "8px 14px",
-                borderRadius: 6,
-                border: "1px solid #ccc",
-                backgroundColor: offset === 0 ? "#eee" : "#fff",
-                cursor: offset === 0 ? "not-allowed" : "pointer",
-                fontWeight: "bold",
-              }}
-            >
-              &lt; Oldingi
-            </button>
-            <button
-              onClick={() =>
-                setOffset(Math.min(offset + limit, (pages - 1) * limit))
-              }
-              disabled={offset + limit >= total}
-              style={{
-                padding: "8px 14px",
-                borderRadius: 6,
-                border: "1px solid #ccc",
-                backgroundColor: offset + limit >= total ? "#eee" : "#fff",
-                cursor: offset + limit >= total ? "not-allowed" : "pointer",
-                fontWeight: "bold",
-              }}
-            >
-              Keyingi &gt;
-            </button>
-          </div>
-        </>
-      )}
-    </div>
+        <div>
+          <TextField sx={{ width: "250px" }} onChange={handleSearchChange} />
+        </div>
+      </div>
+    </>
   );
 };
+
+const inputStyle = {
+  padding: "8px 12px",
+  borderRadius: 4,
+  border: "1px solid #ccc",
+  minWidth: 140,
+};
+
+const paginationButton = (disabled: boolean) => ({
+  padding: "8px 16px",
+  borderRadius: 6,
+  border: "1px solid #ccc",
+  backgroundColor: disabled ? "#eee" : "#fff",
+  cursor: disabled ? "not-allowed" : "pointer",
+  fontWeight: "bold",
+});
 
 export default AppointmentsPage;

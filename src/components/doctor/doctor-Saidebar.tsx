@@ -25,10 +25,10 @@ import ListItemText from "@mui/material/ListItemText";
 import Profile from "../navigation/profile";
 import { Link, Outlet } from "react-router-dom";
 import { HomeIcon } from "lucide-react";
-import { FaDashcube, FaUserCheck } from "react-icons/fa";
+import { FaDashcube, FaUser, FaUserCheck } from "react-icons/fa";
 
-const drawerWidthOpen = 280; // Kengaytirilgan drawer width
-const drawerWidthClosed = 72; // Kengaytirilgan yopiq width
+const drawerWidthOpen = 280;
+const drawerWidthClosed = 72;
 
 const menuItems = [
   {
@@ -39,12 +39,22 @@ const menuItems = [
   {
     text: "Dashboard",
     icon: <FaUserCheck style={{ fontSize: 28 }} />,
-    path: "/doctor/patients",
+    path: "/doctor/patient",
   },
   {
     text: "DoctorDashboard",
     icon: <FaDashcube style={{ fontSize: 28 }} />,
     path: "/doctor/docDash",
+  },
+  {
+    text: "DoctorDashboard",
+    icon: <FaDashcube style={{ fontSize: 28 }} />,
+    path: "/doctor/patients/:id/records",
+  },
+  {
+    text: "DoctorDashboard",
+    icon: <FaUser style={{ fontSize: 28 }} />,
+    path: "/doctor/patient/:id",
   },
 ];
 

@@ -51,9 +51,16 @@ function App() {
               </RoleRoute>
             }
           >
-            <Route path="patients" element={<PatientsList />} />
+            <Route path="patient" element={<PatientsList />} />
+            <Route
+              path="patient/:id/records"
+              element={<CreateMedicalRecordForm />}
+            />
+
+            <Route path="patient/:id" element={<PatientsProfile />} />
             <Route path="docDash" element={<DoctorDashboard />} />
           </Route>
+
           <Route
             path="/reception"
             element={
